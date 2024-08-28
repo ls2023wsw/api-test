@@ -1,0 +1,1 @@
+C:/Users/luoshang/AppData/Local/Programs/Python/Python312/python.exe e:/AI/ts/app.py

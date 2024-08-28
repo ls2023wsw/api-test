@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 测试工具(广告：https://linux.do/t/topic/185870)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        #models {
+            height: 100px; /* 增加高度 */
+            resize: vertical; /* 允许用户手动调整高度 */
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #218838;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+    <script>
+        function validateForm() {
+            const url = document.getElementById('url').value;
+            const key = document.getElementById('key').value;
+            const models = document.getElementById('models').value;
+            let errorMessage = '';
+
+            // 检查 URL 是否包含 /v1/chat/completions
+            if (!url.includes('/v1/chat/completions')) {
+                errorMessage += 'URL 必须包含 "/v1/chat/completions"。\n';
+            }
+
+            // 检查 Key 是否填写
+            if (key.trim() === '') {
+                errorMessage += 'API Key 是必填项。\n';
+            }
+
+            // 检查模型列表是否填写
+            if (models.trim() === '') {
+                errorMessage += '模型列表是必填项。\n';
+            }
+
+            if (errorMessage) {
+                // 如果有错误，显示提示信息
+                const errorDiv = document.getElementById('error-message');
+                errorDiv.textContent = errorMessage;
+                return false;  // 阻止表单提交
+            }
+
+            return true;  // 允许表单提交
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>API 测试工具(https://linux.do/t/topic/186449)</h1>
+        <div id="error-message" class="error-message"></div>
+        <form id="testForm" action="/start_test" method="POST" onsubmit="return validateForm()">
+            <label for="url">API URL:</label>
+            <input type="text" id="url" name="url" placeholder="请输入 API URL">
+
+            <label for="key">API Key:</label>
+            <input type="text" id="key" name="key" placeholder="请输入 API Key">
+
+            <label for="models">模型列表 (逗号分隔):</label>
+            <input type="text" id="models" name="models" placeholder="按照这种格式：gpt3.5,gpt-4,.....以此类推">
+
+            <input type="submit" value="开始测试">
+        </form>
+    </div>
+</body>
+</html>

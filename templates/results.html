@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Model Testing - Results</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #progress {
+            font-size: 18px;
+            margin: 20px 0;
+            text-align: center;
+            color: #333;
+        }
+        .table-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        table {
+            width: 48%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        #normal-table {
+            background-color: #e6ffe6;
+            color: #28a745;
+        }
+        #abnormal-table {
+            background-color: #ffe6e6;
+            color: #dc3545;
+        }
+        th {
+            background-color: #ddd;
+        }
+        td {
+            border-bottom: 1px solid #ccc;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Model Testing - Results</h1>
+        <div id="progress">Progress: 0 / {{ total }}</div>
+        <div class="table-container">
+            <table id="normal-table">
+                <thead>
+                    <tr>
+                        <th>正常的模型</th>
+                    </tr>
+                </thead>
+                <tbody id="normal-list">
+                    <!-- 正常的模型列表会动态添加在这里 -->
+                </tbody>
+            </table>
+            <table id="abnormal-table">
+                <thead>
+                    <tr>
+                        <th>不正常的模型</th>
+                    </tr>
+                </thead>
+                <tbody id="abnormal-list">
+                    <!-- 不正常的模型列表会动态添加在这里 -->
+                </tbody>
+            </table>
+        </div>
+        <form action="/start_results_test/{{ session_id }}" method="post">
+            <button type="submit">重新开始测试</button>
+        </form>
+    </div>
+
+    <script>
+        function updateProgress() {
+            fetch('/progress/{{ session_id }}')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('progress').innerText = `Progress: ${data.progress} / ${data.total}`;
+
+                    // 更新正常模型列表
+                    const normalList = document.getElementById('normal-list');
+                    normalList.innerHTML = '';
+                    data.normal.forEach(model => {
+                        const tr = document.createElement('tr');
+                        const td = document.createElement('td');
+                        td.innerText = model;
+                        tr.appendChild(td);
+                        normalList.appendChild(tr);
+                    });
+
+                    // 更新不正常模型列表
+                    const abnormalList = document.getElementById('abnormal-list');
+                    abnormalList.innerHTML = '';
+                    data.abnormal.forEach(model => {
+                        const tr = document.createElement('tr');
+                        const td = document.createElement('td');
+                        td.innerText = model;
+                        tr.appendChild(td);
+                        abnormalList.appendChild(tr);
+                    });
+
+                    if (data.progress < data.total) {
+                        setTimeout(updateProgress, 1000);
+                    }
+                });
+        }
+
+        // 初始化进度更新
+        updateProgress();
+    </script>
+</body>
+</html>
